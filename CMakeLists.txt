@@ -3,4 +3,4 @@ project(neural_network)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(neural_network main.cpp MultilayerPerceptron.h)
+add_executable(neural_network main.cpp MultilayerPerceptron.h Neuron.cpp)
