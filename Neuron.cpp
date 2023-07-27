@@ -1,5 +1,7 @@
 #include "Neuron.h"
 #include <numeric>
+#include <format>
+#include <iostream>
 
 /**
  * Constructor.
@@ -20,6 +22,12 @@ Neuron::Neuron(int numberOfInputs, const function<double(double)>& activationFun
  * @return the neuron's activation after performing the forward pass.
  */
 double Neuron::ForwardPass(vector<double> input) {
+	if(input.size() != numberOfInputs) {
+		throw std::invalid_argument(
+				"Incorrect number of inputs (" + to_string(input.size()) + ") provided to neuron (expected " +
+				to_string(numberOfInputs) + ").");
+	}
+
 	this->activation = this->activationFunction(std::inner_product(input.begin(), input.end(), this->weights.begin(), double {}));
 	return this->activation;
 }
@@ -31,5 +39,5 @@ double Neuron::ForwardPass(vector<double> input) {
  */
 double Neuron::GetActivation()
 {
-	return this->activation
+	return this->activation;
 }
