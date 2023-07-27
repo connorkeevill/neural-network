@@ -2,6 +2,7 @@
 #include <numeric>
 #include <format>
 #include <iostream>
+#include "helpers.h"
 
 /**
  * Constructor.
@@ -13,6 +14,14 @@ Neuron::Neuron(int numberOfInputs, const function<double(double)>& activationFun
 {
 	this->numberOfInputs = numberOfInputs;
 	this->activationFunction = activationFunction;
+
+	this->weights.reserve(numberOfInputs);
+	for(int weight = 0; weight < numberOfInputs; ++weight)
+	{
+		weights.push_back(rand(-1, 1));
+	}
+
+	bias = rand(-1, 1);
 }
 
 /**
@@ -28,7 +37,7 @@ double Neuron::ForwardPass(vector<double> input) {
 				to_string(numberOfInputs) + ").");
 	}
 
-	this->activation = this->activationFunction(std::inner_product(input.begin(), input.end(), this->weights.begin(), double {}));
+	this->activation = this->activationFunction(inner_product(input.begin(), input.end(), this->weights.begin(), double {}) + bias);
 	return this->activation;
 }
 
