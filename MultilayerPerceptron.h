@@ -1,8 +1,8 @@
-#ifndef NEURAL_NETWORK_MULTILAYERPERCEPTRON_H
-#define NEURAL_NETWORK_MULTILAYERPERCEPTRON_H
+#pragma once
 
 #include <cstdlib>
 #include <vector>
+#include <functional>
 #include "Layer.h"
 
 using namespace std;
@@ -12,16 +12,16 @@ class Dataset;
 class MultilayerPerceptron
 {
 public:
-	MultilayerPerceptron(const vector<int> shape);
+	explicit MultilayerPerceptron(const vector<int>& shape, const function<double(double)> activationFunction);
 
 	void Train(const Dataset dataset);
 
 	vector<double> ForwardPass(vector<double>);
 private:
-	const vector<int> shape;
+	int NumberOfInputs();
+	int NumberOfOutputs();
+
+	vector<int> shape;
 
 	vector<Layer> layers;
 };
-
-
-#endif //NEURAL_NETWORK_MULTILAYERPERCEPTRON_H
