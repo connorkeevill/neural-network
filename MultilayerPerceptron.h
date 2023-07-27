@@ -4,10 +4,9 @@
 #include <vector>
 #include <functional>
 #include "Layer.h"
+#include "data/Dataset.h"
 
 using namespace std;
-
-class Dataset;
 
 class MultilayerPerceptron
 {

@@ -51,3 +51,8 @@ int MultilayerPerceptron::NumberOfInputs() {
 int MultilayerPerceptron::NumberOfOutputs() {
 	return this->shape[this->shape.size()];
 }
+
+void MultilayerPerceptron::Train(const Dataset dataset)
+{
+
+}
