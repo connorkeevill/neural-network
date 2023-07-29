@@ -3,8 +3,8 @@
 class ActivationFunction
 {
 public:
-	virtual double Function(double input) = 0;
-	virtual double Derivative(double input) = 0;
+	virtual double Function(double input) { return double{}; };
+	virtual double Derivative(double input) { return double{}; };
     virtual ~ActivationFunction() = default;
 };
 

@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 #include <vector>
-#include <functional>
+#include "ActivationFunction.h"
 #include "Layer.h"
 #include "data/Dataset.h"
 
@@ -11,7 +11,7 @@ using namespace std;
 class MultilayerPerceptron
 {
 public:
-	explicit MultilayerPerceptron(const vector<int>& shape, const function<double(double)> activationFunction);
+	explicit MultilayerPerceptron(const vector<int>& shape, ActivationFunction& activationFunction);
 
 	void Train(Dataset dataset, double learningRate, int epochs);
 

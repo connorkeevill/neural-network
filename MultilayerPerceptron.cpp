@@ -8,7 +8,7 @@
  * @param shape a vector of integers specifying both the number of layers, and the number of neurons in each.
  * @param activationFunction the activation function to use. TODO: For now this is just going to be sigmoid.
  */
-MultilayerPerceptron::MultilayerPerceptron(const vector<int>& shape, function<double(double)> activationFunction)
+MultilayerPerceptron::MultilayerPerceptron(const vector<int>& shape, ActivationFunction& activationFunction)
 {
 	this->shape = shape;
 

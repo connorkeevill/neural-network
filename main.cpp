@@ -1,13 +1,13 @@
 #include <iostream>
 #include "data/Dataset.h"
 #include "MultilayerPerceptron.h"
+#include "ActivationFunction.h"
 
 int main()
 {
 	// Create a network with 3 input neurons, one hidden layer with 3 neurons, and an output layer of 2 neurons.
-	auto network = std::make_unique<MultilayerPerceptron>(std::vector<int>{784, 3, 10}, [](double x) -> double {
-        return 1.0 / (1.0 + std::exp(-x));
-    });
+	Sigmoid* activationFunction = new Sigmoid{};
+	auto network = std::make_unique<MultilayerPerceptron>(std::vector<int>{784, 3, 10}, *activationFunction);
 
 	Dataset data = MnistDataset("t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte");
 

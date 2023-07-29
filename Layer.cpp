@@ -8,7 +8,7 @@
  * @param numberOfOutputs the number of outputs (or neurons) that this layer has.
  * @param activationFunction the non-linear activation function used by the neurons in this layer.
  */
-Layer::Layer(int numberOfInputs, int numberOfOutputs, const function<double(double)>& activationFunction)
+Layer::Layer(int numberOfInputs, int numberOfOutputs, ActivationFunction& activationFunction)
 {
 	this->numberOfInputs = numberOfInputs;
 	this->numberOfNeurons = numberOfOutputs;

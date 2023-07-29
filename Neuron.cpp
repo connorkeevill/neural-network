@@ -1,6 +1,5 @@
 #include "Neuron.h"
 #include <numeric>
-#include <format>
 #include <iostream>
 #include "helpers.h"
 
@@ -10,7 +9,7 @@
  * @param numberOfInputs the number of inputs to this neuron.
  * @param activationFunction the neuron's activation function.
  */
-Neuron::Neuron(int numberOfInputs, const function<double(double)>& activationFunction)
+Neuron::Neuron(int numberOfInputs, ActivationFunction& activationFunction) : activationFunction(activationFunction)
 {
 	this->numberOfInputs = numberOfInputs;
 	this->activationFunction = activationFunction;
@@ -37,7 +36,7 @@ double Neuron::ForwardPass(vector<double> input) {
 				to_string(numberOfInputs) + ").");
 	}
 
-	this->activation = this->activationFunction(inner_product(input.begin(), input.end(), this->weights.begin(), double {}) + bias);
+	this->activation = this->activationFunction.Function(inner_product(input.begin(), input.end(), this->weights.begin(), double {}) + bias);
 	return this->activation;
 }
 

@@ -1,20 +1,20 @@
 #pragma once
 
 #include <vector>
-#include <functional>
+#include "ActivationFunction.h"
 
 using namespace std;
 
 class Neuron {
 public:
-	Neuron(int numberOfInputs, const function<double(double)>& activationFunction);
+	Neuron(int numberOfInputs, ActivationFunction& activationFunction);
 
 	double ForwardPass(vector<double> input);
 
 	double GetActivation();
 private:
 	int numberOfInputs;
-	function<double(double)> activationFunction;
+	ActivationFunction& activationFunction;
 
 	vector<double> weights;
 	double bias;
