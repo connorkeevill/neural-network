@@ -52,7 +52,27 @@ int MultilayerPerceptron::NumberOfOutputs() {
 	return this->shape[this->shape.size()];
 }
 
-void MultilayerPerceptron::Train(const Dataset dataset)
+void MultilayerPerceptron::Train(Dataset dataset, double learningRate, int epochs)
 {
+	for(int epoch = 0; epoch < epochs; ++epoch)
+	{
+		vector<double> gradient;
+		int trainingExamplesSeen = 0;
 
+		while(!dataset.EndOfData())
+		{
+			FeatureVector fv = dataset.GetNextFeatureVector();
+			++trainingExamplesSeen;
+
+			vector<double> predicted = ForwardPass(fv.data);
+
+			// TODO: Perform back prop to populate the gradient vector.
+			for(int layer = layers.size(); layer > 1; --layer)
+			{}
+		}
+
+		for(double& partialDerivative : gradient) { partialDerivative = partialDerivative / trainingExamplesSeen; }
+
+		// TODO: After we have seen all training examples, we need to update the weights based on the gradient vector.
+	}
 }
