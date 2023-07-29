@@ -5,13 +5,14 @@
 #include "ActivationFunction.h"
 #include "Layer.h"
 #include "data/Dataset.h"
+#include "CostFunction.h"
 
 using namespace std;
 
 class MultilayerPerceptron
 {
 public:
-	explicit MultilayerPerceptron(const vector<int>& shape, ActivationFunction& activationFunction);
+	MultilayerPerceptron(const vector<int>& shape, ActivationFunction& activationFunction, CostFunction& costFunction);
 
 	void Train(Dataset dataset, double learningRate, int epochs);
 
@@ -20,7 +21,8 @@ private:
 	int NumberOfInputs();
 	int NumberOfOutputs();
 
-	vector<int> shape;
+	CostFunction& costFunction;
 
+	vector<int> shape;
 	vector<Layer> layers;
 };
