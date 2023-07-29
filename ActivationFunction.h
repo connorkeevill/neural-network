@@ -13,4 +13,4 @@ class Sigmoid : public ActivationFunction
 public:
 	double Function(double input) override;
 	double Derivative(double input) override;
-}
+};
