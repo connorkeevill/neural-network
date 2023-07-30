@@ -108,6 +108,7 @@ string MnistDataset::ClassificationToString(vector<double> output)
 		if(output[index] > max)
 		{
 			maxIndex = index;
+			max = output[index];
 		}
 	}
 
