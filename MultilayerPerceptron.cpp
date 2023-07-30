@@ -1,6 +1,7 @@
 #include "MultilayerPerceptron.h"
 
 #include <utility>
+#include <iostream>
 
 /**
  * Construct the network.
@@ -28,7 +29,7 @@ MultilayerPerceptron::MultilayerPerceptron(const vector<int>& shape, ActivationF
 vector<double> MultilayerPerceptron::ForwardPass(vector<double> input) {
 	vector<double> output = std::move(input);
 
-	for (Layer layer : this->layers) {
+	for (Layer& layer : this->layers) {
 		output = layer.ForwardPass(output);
 	}
 
@@ -57,9 +58,12 @@ void MultilayerPerceptron::Train(Dataset dataset, double learningRate, int epoch
 {
 	for(int epoch = 0; epoch < epochs; ++epoch)
 	{
-		vector<double> gradient;
-		int trainingExamplesSeen = 0;
+		std::cout << "Epoch: " << epoch << std::endl;
 
+		int trainingExamplesSeen = 0;
+		double cost = 0;
+
+		dataset.ResetCounter();
 		while(!dataset.EndOfData())
 		{
 			FeatureVector fv = dataset.GetNextFeatureVector();
@@ -67,13 +71,30 @@ void MultilayerPerceptron::Train(Dataset dataset, double learningRate, int epoch
 
 			vector<double> predicted = ForwardPass(fv.data);
 
+			cost += costFunction.Cost(predicted, fv.label);
+
+			// TODO: This assumes that there are at least 3 layers in the network; make it robust for a network with no hidden layer.
+			layers[layers.size() - 1].BackwardPassOutputLayer(layers[layers.size() - 2].Activations(),
+															  fv.label,
+															  costFunction);
+
 			// TODO: Perform back prop to populate the gradient vector.
-			for(int layer = layers.size(); layer > 1; --layer)
-			{}
+			for(int layer = layers.size() - 2; layer >= 0; --layer)
+			{
+				vector<double> previousActivations = layer > 0 ? layers[layer - 1].Activations() : fv.data;
+
+				layers[layer].BackwardPassHiddenLayer(previousActivations, layers[layer + 1]);
+			}
 		}
 
-		for(double& partialDerivative : gradient) { partialDerivative = partialDerivative / trainingExamplesSeen; }
+		cout << "Scale Factor being used: " << learningRate / trainingExamplesSeen << endl;
 
-		// TODO: After we have seen all training examples, we need to update the weights based on the gradient vector.
+		for(Layer& layer : layers)
+		{
+			layer.ApplyGradientsToWeights(learningRate / trainingExamplesSeen);
+		}
+
+		cost /= trainingExamplesSeen;
+		cout << "Cost: " << cost << endl;
 	}
 }

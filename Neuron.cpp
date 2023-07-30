@@ -15,9 +15,11 @@ Neuron::Neuron(int numberOfInputs, ActivationFunction& activationFunction) : act
 	this->activationFunction = activationFunction;
 
 	this->weights.reserve(numberOfInputs);
+	this->weightGradients.reserve(numberOfInputs);
 	for(int weight = 0; weight < numberOfInputs; ++weight)
 	{
 		weights.push_back(rand(-1, 1));
+		weightGradients.push_back(0);
 	}
 
 	bias = rand(-1, 1);
@@ -48,4 +50,34 @@ double Neuron::ForwardPass(vector<double> input) {
 double Neuron::GetActivation()
 {
 	return this->activation;
+}
+
+/**
+ * Returns the weight at the given index.
+ *
+ * @param index index of the weight wanted.
+ * @return the weight.
+ */
+double Neuron::GetWeight(int index)
+{
+	return weights[index];
+}
+
+void Neuron::UpdateGradients(vector<double> previousActivations, double partialDerivative)
+{
+	PartialDerivative = activationFunction.Derivative(activation) * partialDerivative;
+
+	for(int weightIndex = 0; weightIndex < weights.size(); ++weightIndex)
+	{
+		weightGradients[weightIndex] += previousActivations[weightIndex] * PartialDerivative;
+	}
+}
+
+void Neuron::ApplyGradientsToWeights(double scalingFactor)
+{
+	for(int weightIndex = 0; weightIndex < weights.size(); ++weightIndex)
+	{
+		weights[weightIndex] -= scalingFactor * weightGradients[weightIndex];
+		weightGradients[weightIndex] = 0;
+	}
 }
