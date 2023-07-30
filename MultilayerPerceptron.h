@@ -14,7 +14,7 @@ class MultilayerPerceptron
 public:
 	MultilayerPerceptron(const vector<int>& shape, ActivationFunction& activationFunction, CostFunction& costFunction);
 
-	void Train(Dataset dataset, double learningRate, int epochs);
+	void Train(Dataset* dataset, double learningRate, int epochs);
 
 	vector<double> ForwardPass(vector<double>);
 private:

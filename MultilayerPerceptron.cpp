@@ -54,7 +54,7 @@ int MultilayerPerceptron::NumberOfOutputs() {
 	return this->shape[this->shape.size()];
 }
 
-void MultilayerPerceptron::Train(Dataset dataset, double learningRate, int epochs)
+void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int epochs)
 {
 	for(int epoch = 0; epoch < epochs; ++epoch)
 	{
@@ -63,10 +63,10 @@ void MultilayerPerceptron::Train(Dataset dataset, double learningRate, int epoch
 		int trainingExamplesSeen = 0;
 		double cost = 0;
 
-		dataset.ResetCounter();
-		while(!dataset.EndOfData())
+		dataset->ResetCounter();
+		while(!dataset->EndOfData())
 		{
-			FeatureVector fv = dataset.GetNextFeatureVector();
+			FeatureVector fv = dataset->GetNextFeatureVector();
 			++trainingExamplesSeen;
 
 			vector<double> predicted = ForwardPass(fv.data);
