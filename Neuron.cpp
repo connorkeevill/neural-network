@@ -71,6 +71,8 @@ void Neuron::UpdateGradients(vector<double> previousActivations, double partialD
 	{
 		weightGradients[weightIndex] += previousActivations[weightIndex] * PartialDerivative;
 	}
+
+	biasGradient += PartialDerivative;
 }
 
 void Neuron::ApplyGradientsToWeights(double scalingFactor)
@@ -79,5 +81,8 @@ void Neuron::ApplyGradientsToWeights(double scalingFactor)
 	{
 		weights[weightIndex] -= scalingFactor * weightGradients[weightIndex];
 		weightGradients[weightIndex] = 0;
+
+		bias -= scalingFactor * biasGradient;
+		biasGradient = 0;
 	}
 }

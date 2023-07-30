@@ -25,7 +25,8 @@ double Sigmoid::Function(double input)
  */
 double Sigmoid::Derivative(double input)
 {
-	return input * (1 - input);
+	double sigmoid = Function(input);
+	return sigmoid * (1 - sigmoid);
 }
 
 

@@ -23,6 +23,7 @@ private:
 	vector<double> weights;
 	vector<double> weightGradients;
 	double bias;
+	double biasGradient;
 
 	double activation;
 };
