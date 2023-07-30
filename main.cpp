@@ -11,7 +11,30 @@ int main()
 	MeanSquaredError costFunction{};
 	auto network = std::make_unique<MultilayerPerceptron>(std::vector<int>{784, 100, 10}, activationFunction, costFunction);
 
-	Dataset data = MnistDataset("t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte");
+	Dataset trainingData = MnistDataset("train-images-idx3-ubyte", "train-labels-idx1-ubyte");
 
-	network->Train(data, 0.5, 1000);
+	network->Train(trainingData, 0.1, 100);
+
+	Dataset testData = MnistDataset("t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte");
+
+	for(int i = 0; i < 10; ++i)
+	{
+		FeatureVector fv = testData.GetNextFeatureVector();
+
+		vector<double> predicted = network->ForwardPass(fv.data);
+
+		for(double element : predicted)
+		{
+			cout << element << " ";
+		}
+
+		cout << endl;
+
+		for(double element : fv.label)
+		{
+			cout << element << " ";
+		}
+
+		cout << endl;
+	}
 }
