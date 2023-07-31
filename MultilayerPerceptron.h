@@ -18,6 +18,8 @@ public:
 
 	vector<double> ForwardPass(vector<double>);
 private:
+	vector<vector<double>> TrainingForwardPass(vector<double> input);
+
 	int NumberOfInputs();
 	int NumberOfOutputs();
 
@@ -25,4 +27,8 @@ private:
 
 	vector<int> shape;
 	vector<Layer> layers;
+};
+
+struct BackpropData {
+	vector<vector<double>> activations;
 };

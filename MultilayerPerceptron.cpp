@@ -37,6 +37,28 @@ vector<double> MultilayerPerceptron::ForwardPass(vector<double> input) {
 }
 
 /**
+ * A forward pass, for training the network. Returns the activations for *every* layer, instead of just the last.
+ *
+ * @param input the input to propagate through the network.
+ * @return 2D vector containing the activations of every neuron in the network.
+ */
+vector<vector<double>> MultilayerPerceptron::TrainingForwardPass(vector<double> input) {
+	vector<vector<double>> activations;
+	activations.reserve(layers.size());
+
+	vector<double> output = std::move(input);
+	activations.push_back(output);
+
+	for(Layer& layer : layers)
+	{
+		output = layer.ForwardPass(output);
+		activations.push_back(output);
+	}
+
+	return activations;
+}
+
+/**
  * Gets the number of inputs to the network by examining the first element of the shape vector.
  *
  * @return the number of inputs that the network takes.
