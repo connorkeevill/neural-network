@@ -54,7 +54,7 @@ int MultilayerPerceptron::NumberOfOutputs() {
 	return this->shape[this->shape.size()];
 }
 
-void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int epochs)
+void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batchSize, int epochs)
 {
 	for(int epoch = 0; epoch < epochs; ++epoch)
 	{
@@ -66,35 +66,31 @@ void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int epoc
 		dataset->ResetCounter();
 		while(!dataset->EndOfData())
 		{
+			if(trainingExamplesSeen == batchSize)
+			{
+				for(Layer& layer : layers)
+				{
+					layer.ApplyGradientsToWeights(learningRate / trainingExamplesSeen);
+				}
+
+				trainingExamplesSeen = 0;
+			}
+
 			FeatureVector fv = dataset->GetNextFeatureVector();
 			++trainingExamplesSeen;
 
 			vector<double> predicted = ForwardPass(fv.data);
-
-			cost += costFunction.Cost(predicted, fv.label);
 
 			// TODO: This assumes that there are at least 3 layers in the network; make it robust for a network with no hidden layer.
 			layers[layers.size() - 1].BackwardPassOutputLayer(layers[layers.size() - 2].Activations(),
 															  fv.label,
 															  costFunction);
 
-			// TODO: Perform back prop to populate the gradient vector.
 			for(int layer = layers.size() - 2; layer >= 0; --layer)
 			{
 				vector<double> previousActivations = layer > 0 ? layers[layer - 1].Activations() : fv.data;
-
 				layers[layer].BackwardPassHiddenLayer(previousActivations, layers[layer + 1]);
 			}
 		}
-
-		cout << "Scale Factor being used: " << learningRate / trainingExamplesSeen << endl;
-
-		for(Layer& layer : layers)
-		{
-			layer.ApplyGradientsToWeights(learningRate / trainingExamplesSeen);
-		}
-
-		cost /= trainingExamplesSeen;
-		cout << "Cost: " << cost << endl;
 	}
 }

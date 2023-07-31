@@ -9,32 +9,31 @@ int main()
 	// Create a network with 3 input neurons, one hidden layer with 3 neurons, and an output layer of 2 neurons.
 	Sigmoid activationFunction{};
 	MeanSquaredError costFunction{};
-	auto network = std::make_unique<MultilayerPerceptron>(std::vector<int>{784, 100, 10}, activationFunction, costFunction);
+	auto network = std::make_unique<MultilayerPerceptron>(std::vector<int>{784, 50, 10}, activationFunction, costFunction);
 
-	Dataset trainingData = MnistDataset("train-images-idx3-ubyte", "train-labels-idx1-ubyte");
+	Dataset *trainingData = new MnistDataset("train-images-idx3-ubyte", "train-labels-idx1-ubyte");
 
-	network->Train(trainingData, 0.1, 100);
+	network->Train(trainingData, 0.2, 32, 20);
 
-	Dataset testData = MnistDataset("t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte");
+	Dataset *testData = new MnistDataset("t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte");
 
-	for(int i = 0; i < 10; ++i)
+	int correctClassifications = 0;
+
+	while(!testData->EndOfData())
 	{
-		FeatureVector fv = testData.GetNextFeatureVector();
-
+		FeatureVector fv = testData->GetNextFeatureVector();
 		vector<double> predicted = network->ForwardPass(fv.data);
 
-		for(double element : predicted)
-		{
-			cout << element << " ";
-		}
+		string predictedClass = testData->ClassificationToString(predicted);
+		string actualClass = testData->ClassificationToString(fv.label);
 
-		cout << endl;
+		if(predictedClass == actualClass) { ++correctClassifications; }
 
-		for(double element : fv.label)
-		{
-			cout << element << " ";
-		}
-
+		cout << "Predicted: " << predictedClass << endl;
+		cout << "Actual: " << actualClass << endl;
 		cout << endl;
 	}
+
+	cout << "Correct classifications: " << correctClassifications << endl;
+	cout << "Accuracy: " << (correctClassifications / 10000.0) << endl;
 }
