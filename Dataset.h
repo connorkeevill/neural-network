@@ -19,6 +19,7 @@ public:
 	FeatureVector GetNextFeatureVector();
 	bool EndOfData();
 	void ResetCounter();
+	int Size();
 	virtual string ClassificationToString(vector<double> output) { return ""; }
 protected:
 	vector<vector<double>> data;

@@ -72,6 +72,17 @@ void Dataset::ResetCounter(){
 }
 
 /**
+ * @brief Gets the size of the dataset.
+ *
+ * This function returns the number of items in the dataset.
+ *
+ * @return The size of the dataset.
+ */
+int Dataset::Size() {
+	return data.size();
+}
+
+/**
  * Initialise the MnistDataset by reading in the images and the labels.
  * @param dataFilepath the path to the file containing the images.
  * @param labelsFilepath the path to the file containing the labels.
