@@ -80,6 +80,7 @@ void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batc
 			++trainingExamplesSeen;
 
 			vector<double> predicted = ForwardPass(fv.data);
+			cost += costFunction.Cost(predicted, fv.label);
 
 			// Handle the network only having two layers (i.e. no hidden layers)
 			vector<double> previousActivations = ((int)layers.size()) - 2 >= 0 ? layers[layers.size() - 2].Activations() : fv.data;
@@ -93,5 +94,7 @@ void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batc
 				layers[layer].BackwardPassHiddenLayer(previousActivations, layers[layer + 1]);
 			}
 		}
+
+		cout << "Batch-averaged cost: " << cost / 60000 << endl;
 	}
 }
