@@ -9,7 +9,7 @@ int main()
 	// Create a network with 3 input neurons, one hidden layer with 3 neurons, and an output layer of 2 neurons.
 	Sigmoid activationFunction{};
 	MeanSquaredError costFunction{};
-	auto network = std::make_unique<MultilayerPerceptron>(std::vector<int>{784, 50, 10}, activationFunction, costFunction);
+	auto network = std::make_unique<MultilayerPerceptron>(std::vector<int>{784, 10}, activationFunction, costFunction);
 
 	Dataset *trainingData = new MnistDataset("train-images-idx3-ubyte", "train-labels-idx1-ubyte");
 

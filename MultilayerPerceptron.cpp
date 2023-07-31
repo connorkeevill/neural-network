@@ -81,14 +81,15 @@ void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batc
 
 			vector<double> predicted = ForwardPass(fv.data);
 
-			// TODO: This assumes that there are at least 3 layers in the network; make it robust for a network with no hidden layer.
-			layers[layers.size() - 1].BackwardPassOutputLayer(layers[layers.size() - 2].Activations(),
+			// Handle the network only having two layers (i.e. no hidden layers)
+			vector<double> previousActivations = ((int)layers.size()) - 2 >= 0 ? layers[layers.size() - 2].Activations() : fv.data;
+			layers[layers.size() - 1].BackwardPassOutputLayer(previousActivations,
 															  fv.label,
 															  costFunction);
 
-			for(int layer = layers.size() - 2; layer >= 0; --layer)
+			for(int layer = (int)layers.size() - 2; layer >= 0; --layer)
 			{
-				vector<double> previousActivations = layer > 0 ? layers[layer - 1].Activations() : fv.data;
+				previousActivations = layer > 0 ? layers[layer - 1].Activations() : fv.data;
 				layers[layer].BackwardPassHiddenLayer(previousActivations, layers[layer + 1]);
 			}
 		}
