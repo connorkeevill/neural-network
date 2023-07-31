@@ -38,18 +38,7 @@ double Neuron::ForwardPass(vector<double> input) {
 				to_string(numberOfInputs) + ").");
 	}
 
-	this->activation = this->activationFunction.Function(inner_product(input.begin(), input.end(), this->weights.begin(), double {}) + bias);
-	return this->activation;
-}
-
-/**
- * Gets the activation of this neuron.
- *
- * @return the activation.
- */
-double Neuron::GetActivation()
-{
-	return this->activation;
+	return this->activationFunction.Function(inner_product(input.begin(), input.end(), this->weights.begin(), double {}) + bias);;
 }
 
 /**
