@@ -79,8 +79,8 @@ void Neuron::ApplyGradientsToWeights(double scalingFactor)
 	{
 		weights[weightIndex] -= scalingFactor * weightGradients[weightIndex];
 		weightGradients[weightIndex] = 0;
-
-		bias -= scalingFactor * biasGradient;
-		biasGradient = 0;
 	}
+
+	bias -= scalingFactor * biasGradient;
+	biasGradient = 0;
 }
