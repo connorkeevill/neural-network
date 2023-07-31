@@ -39,31 +39,41 @@ vector<double> Layer::ForwardPass(const vector<double>& inputs)
 	return activations;
 }
 
-void Layer::BackwardPassOutputLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
+vector<double> Layer::BackwardPassOutputLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
 									vector<double> expectedOutputs, CostFunction &cost) {
+	vector<double> partialDerivatives;
+
 	for(int neuron = 0; neuron < neurons.size(); ++neuron)
 	{
 		double costFunctionDerivative = cost.Derivative(currentLayerActivations[neuron], expectedOutputs[neuron]);
-		neurons[neuron].UpdateGradients(previousLayerActivations, currentLayerActivations[neuron],
-										costFunctionDerivative);
+		partialDerivatives.push_back(neurons[neuron].UpdateGradients(previousLayerActivations, currentLayerActivations[neuron],
+										costFunctionDerivative));
 	}
+
+	return partialDerivatives;
 }
 
-void Layer::BackwardPassHiddenLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
-									Layer& nextLayer)
+vector<double> Layer::BackwardPassHiddenLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
+									vector<double> &nextLayerPartialDerivatives, Layer &nextLayer)
 {
+	vector<double> partialDerivatives;
+
 	for(int updateNeuron = 0; updateNeuron < neurons.size(); ++updateNeuron)
 	{
 		double weightedPartialDerivative = 0;
 
-		for(Neuron nextNeuron : nextLayer.neurons)
+		for(int nextNeuron = 0; nextNeuron < nextLayer.neurons.size(); ++nextNeuron)
 		{
-			weightedPartialDerivative += nextNeuron.GetWeight(updateNeuron) * nextNeuron.PartialDerivative;
+			weightedPartialDerivative += nextLayer.neurons[nextNeuron].GetWeight(updateNeuron) *
+											nextLayerPartialDerivatives[nextNeuron];
 		}
 
-		neurons[updateNeuron].UpdateGradients(previousLayerActivations, currentLayerActivations[updateNeuron],
-											  weightedPartialDerivative);
+		partialDerivatives.push_back(neurons[updateNeuron].UpdateGradients(previousLayerActivations,
+													  currentLayerActivations[updateNeuron],
+													  weightedPartialDerivative));
 	}
+
+	return partialDerivatives;
 }
 
 void Layer::ApplyGradientsToWeights(double scalingFactor) {

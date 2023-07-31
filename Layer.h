@@ -11,10 +11,10 @@ public:
 	Layer(int numberOfInputs, int numberOfOutputs, ActivationFunction& activationFunction);
 
 	vector<double> ForwardPass(const vector<double>& inputs);
-	void BackwardPassOutputLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
+	vector<double> BackwardPassOutputLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
 								 vector<double> expectedOutputs, CostFunction &cost);
-	void BackwardPassHiddenLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
-								 Layer &nextLayer);
+	vector<double> BackwardPassHiddenLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
+								 vector<double> &nextLayerPartialDerivatives, Layer &nextLayer);
 	void ApplyGradientsToWeights(double scalingFactor);
 private:
 	int numberOfInputs;

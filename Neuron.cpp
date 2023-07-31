@@ -14,6 +14,9 @@ Neuron::Neuron(int numberOfInputs, ActivationFunction& activationFunction) : act
 	this->numberOfInputs = numberOfInputs;
 	this->activationFunction = activationFunction;
 
+	this->weightGradientMutex = new mutex{};
+	this->biasGradientMutex = new mutex{};
+
 	this->weights.reserve(numberOfInputs);
 	this->weightGradients.reserve(numberOfInputs);
 	for(int weight = 0; weight < numberOfInputs; ++weight)
@@ -52,16 +55,22 @@ double Neuron::GetWeight(int index)
 	return weights[index];
 }
 
-void Neuron::UpdateGradients(vector<double> &previousActivations, double activation, double partialDerivative)
+double Neuron::UpdateGradients(vector<double> &previousActivations, double activation, double nextLayerPartialDerivative)
 {
-	PartialDerivative = activationFunction.Derivative(activation) * partialDerivative;
+	double currentPartialDerivative = activationFunction.Derivative(activation) * nextLayerPartialDerivative;
 
+	weightGradientMutex->lock();
 	for(int weightIndex = 0; weightIndex < weights.size(); ++weightIndex)
 	{
-		weightGradients[weightIndex] += previousActivations[weightIndex] * PartialDerivative;
+		weightGradients[weightIndex] += previousActivations[weightIndex] * currentPartialDerivative;
 	}
+	weightGradientMutex->unlock();
 
-	biasGradient += PartialDerivative;
+	biasGradientMutex->lock();
+	biasGradient += currentPartialDerivative;
+	biasGradientMutex->unlock();
+
+	return currentPartialDerivative;
 }
 
 void Neuron::ApplyGradientsToWeights(double scalingFactor)

@@ -30,7 +30,3 @@ private:
 	vector<int> shape;
 	vector<Layer> layers;
 };
-
-struct BackpropData {
-	vector<vector<double>> activations;
-};

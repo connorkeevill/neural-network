@@ -13,7 +13,7 @@ int main()
 
 	Dataset *trainingData = new MnistDataset("train-images-idx3-ubyte", "train-labels-idx1-ubyte");
 
-	network->Train(trainingData, 0.2, 32, 100);
+	network->Train(trainingData, 0.1, 50, 10);
 
 	Dataset *testData = new MnistDataset("t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte");
 

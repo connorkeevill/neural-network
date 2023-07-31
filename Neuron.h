@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <shared_mutex>
 #include "ActivationFunction.h"
 
 using namespace std;
@@ -11,13 +12,14 @@ public:
 
 	double ForwardPass(vector<double> input);
 	double GetWeight(int index);
-	void UpdateGradients(vector<double> &previousActivations, double activation, double partialDerivative);
+	double UpdateGradients(vector<double> &previousActivations, double activation, double nextLayerPartialDerivative);
 	void ApplyGradientsToWeights(double scalingFactor);
-
-	double PartialDerivative;
 private:
 	int numberOfInputs;
 	ActivationFunction& activationFunction;
+
+	mutex *weightGradientMutex;
+	mutex *biasGradientMutex;
 
 	vector<double> weights;
 	vector<double> weightGradients;
