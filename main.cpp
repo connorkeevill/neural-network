@@ -30,7 +30,10 @@ int main()
 		if(predictedClass == actualClass) { ++correctClassifications; }
 
 		cout << "Predicted: " << predictedClass << endl;
+		for(double element : predicted) { cout << element << " ";}
+		cout << endl;
 		cout << "Actual: " << actualClass << endl;
+		for(double element : fv.label) { cout << element << " ";}
 		cout << endl;
 	}
 
