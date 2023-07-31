@@ -11,7 +11,7 @@ public:
 
 	double ForwardPass(vector<double> input);
 	double GetWeight(int index);
-	void UpdateGradients(vector<double> previousActivations, double partialDerivative);
+	void UpdateGradients(vector<double> &previousActivations, double activation, double partialDerivative);
 	void ApplyGradientsToWeights(double scalingFactor);
 
 	double PartialDerivative;

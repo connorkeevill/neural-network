@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstdlib>
+#include <iostream>
 #include <vector>
 #include "ActivationFunction.h"
 #include "Layer.h"
-#include "data/Dataset.h"
+#include "Dataset.h"
 #include "CostFunction.h"
+#include "ThreadPool/ThreadPool.h"
 
 using namespace std;
 

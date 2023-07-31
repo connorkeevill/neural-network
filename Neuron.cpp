@@ -52,7 +52,7 @@ double Neuron::GetWeight(int index)
 	return weights[index];
 }
 
-void Neuron::UpdateGradients(vector<double> previousActivations, double partialDerivative)
+void Neuron::UpdateGradients(vector<double> &previousActivations, double activation, double partialDerivative)
 {
 	PartialDerivative = activationFunction.Derivative(activation) * partialDerivative;
 

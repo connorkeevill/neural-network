@@ -11,12 +11,11 @@ public:
 	Layer(int numberOfInputs, int numberOfOutputs, ActivationFunction& activationFunction);
 
 	vector<double> ForwardPass(const vector<double>& inputs);
-	void BackwardPassOutputLayer(const vector<double>& previousLayerActivations, const vector<double>& expectedOutputs, CostFunction& cost);
-	void BackwardPassHiddenLayer(vector<double> previousLayerActivations, Layer& nextLayer);
+	void BackwardPassOutputLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
+								 vector<double> expectedOutputs, CostFunction &cost);
+	void BackwardPassHiddenLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
+								 Layer &nextLayer);
 	void ApplyGradientsToWeights(double scalingFactor);
-
-	vector<double> Activations();
-
 private:
 	int numberOfInputs;
 	int numberOfNeurons;

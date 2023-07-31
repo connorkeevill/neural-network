@@ -39,16 +39,18 @@ vector<double> Layer::ForwardPass(const vector<double>& inputs)
 	return activations;
 }
 
-void Layer::BackwardPassOutputLayer(const vector<double>& previousLayerActivations, const vector<double>& expectedOutputs,
-											  CostFunction& cost) {
+void Layer::BackwardPassOutputLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
+									vector<double> expectedOutputs, CostFunction &cost) {
 	for(int neuron = 0; neuron < neurons.size(); ++neuron)
 	{
-		double costFunctionDerivative = cost.Derivative(Activations()[neuron], expectedOutputs[neuron]);
-		neurons[neuron].UpdateGradients(previousLayerActivations, costFunctionDerivative);
+		double costFunctionDerivative = cost.Derivative(currentLayerActivations[neuron], expectedOutputs[neuron]);
+		neurons[neuron].UpdateGradients(previousLayerActivations, currentLayerActivations[neuron],
+										costFunctionDerivative);
 	}
 }
 
-void Layer::BackwardPassHiddenLayer(vector<double> previousLayerActivations, Layer& nextLayer)
+void Layer::BackwardPassHiddenLayer(vector<double> &previousLayerActivations, vector<double> &currentLayerActivations,
+									Layer& nextLayer)
 {
 	for(int updateNeuron = 0; updateNeuron < neurons.size(); ++updateNeuron)
 	{
@@ -59,7 +61,8 @@ void Layer::BackwardPassHiddenLayer(vector<double> previousLayerActivations, Lay
 			weightedPartialDerivative += nextNeuron.GetWeight(updateNeuron) * nextNeuron.PartialDerivative;
 		}
 
-		neurons[updateNeuron].UpdateGradients(previousLayerActivations, weightedPartialDerivative);
+		neurons[updateNeuron].UpdateGradients(previousLayerActivations, currentLayerActivations[updateNeuron],
+											  weightedPartialDerivative);
 	}
 }
 
@@ -68,17 +71,4 @@ void Layer::ApplyGradientsToWeights(double scalingFactor) {
 	{
 		neuron.ApplyGradientsToWeights(scalingFactor);
 	}
-}
-
-vector<double> Layer::Activations()
-{
-	vector<double> activations{};
-	activations.reserve(neurons.size());
-
-	for(Neuron& neuron : neurons)
-	{
-		activations.push_back(neuron.GetActivation());
-	}
-
-	return activations;
 }

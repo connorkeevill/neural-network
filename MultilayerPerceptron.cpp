@@ -1,8 +1,5 @@
 #include "MultilayerPerceptron.h"
 
-#include <utility>
-#include <iostream>
-
 /**
  * Construct the network.
  *
@@ -78,45 +75,99 @@ int MultilayerPerceptron::NumberOfOutputs() {
 
 void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batchSize, int epochs)
 {
+	// Create threadpool to train in parallel.
+	ThreadPool threads {thread::hardware_concurrency()};
+
+	cout << thread::hardware_concurrency() << endl;
+
+//	ThreadPool threads {1};
+	vector<future<void>> trainingTasks {};
+
 	for(int epoch = 0; epoch < epochs; ++epoch)
 	{
-		std::cout << "Epoch: " << epoch << std::endl;
+		int samplesProcessed = 0;
+		cout << "Epoch: " << epoch << endl;
 
-		int trainingExamplesSeen = 0;
-		double cost = 0;
-
-		dataset->ResetCounter();
 		while(!dataset->EndOfData())
 		{
-			if(trainingExamplesSeen == batchSize)
+			for(int trainingExample = 0; trainingExample < batchSize && samplesProcessed < dataset->Size(); ++trainingExample)
 			{
-				for(Layer& layer : layers)
-				{
-					layer.ApplyGradientsToWeights(learningRate / trainingExamplesSeen);
-				}
+				++samplesProcessed;
 
-				trainingExamplesSeen = 0;
+				// Pull the feature vector from the dataset now (instead of in thread) so that dataset counter is incremented.
+				FeatureVector fv = dataset->GetNextFeatureVector();
+
+				trainingTasks.push_back(threads.enqueue([this, fv] {
+					BackpropData data {};
+
+					data.activations = TrainingForwardPass(fv.data);
+
+					// Handle the network only having two layers (i.e. no hidden layers)
+					vector<double> previousActivations = ((int)layers.size()) - 2 >= 0 ?
+							data.activations[layers.size() - 2] :
+							fv.data;
+
+					layers[layers.size() - 1].BackwardPassOutputLayer(previousActivations,
+																	  data.activations[data.activations.size() - 1],
+																	  fv.label,
+																	  costFunction);
+
+					for(int layer = (int)layers.size() - 2; layer >= 0; --layer)
+					{
+						previousActivations = layer > 0 ? data.activations[layer - 1] : fv.data;
+						layers[layer].BackwardPassHiddenLayer(previousActivations,
+															  data.activations[layer],
+															  layers[layer + 1]);
+					}
+				}));
 			}
 
-			FeatureVector fv = dataset->GetNextFeatureVector();
-			++trainingExamplesSeen;
+			// Wait on all training tasks to finish
+			for(future<void> &trainingTask : trainingTasks) { trainingTask.get();}
+			trainingTasks.clear();
 
-			vector<double> predicted = ForwardPass(fv.data);
-			cost += costFunction.Cost(predicted, fv.label);
-
-			// Handle the network only having two layers (i.e. no hidden layers)
-			vector<double> previousActivations = ((int)layers.size()) - 2 >= 0 ? layers[layers.size() - 2].Activations() : fv.data;
-			layers[layers.size() - 1].BackwardPassOutputLayer(previousActivations,
-															  fv.label,
-															  costFunction);
-
-			for(int layer = (int)layers.size() - 2; layer >= 0; --layer)
-			{
-				previousActivations = layer > 0 ? layers[layer - 1].Activations() : fv.data;
-				layers[layer].BackwardPassHiddenLayer(previousActivations, layers[layer + 1]);
-			}
+			// Apply the accumulated gradients.
+			for(Layer& layer : layers) { layer.ApplyGradientsToWeights(learningRate / samplesProcessed); }
+			samplesProcessed = 0;
 		}
 
-		cout << "Batch-averaged cost: " << cost / 60000 << endl;
+//		std::cout << "Epoch: " << epoch << std::endl;
+//
+//		int trainingExamplesSeen = 0;
+//		double cost = 0;
+//
+//		dataset->ResetCounter();
+//		while(!dataset->EndOfData())
+//		{
+//			if(trainingExamplesSeen == batchSize)
+//			{
+//				for(Layer& layer : layers)
+//				{
+//					layer.ApplyGradientsToWeights(learningRate / trainingExamplesSeen);
+//				}
+//
+//				trainingExamplesSeen = 0;
+//			}
+//
+//			FeatureVector fv = dataset->GetNextFeatureVector();
+//			++trainingExamplesSeen;
+//
+//			vector<double> predicted = ForwardPass(fv.data);
+//			cost += costFunction.Cost(predicted, fv.label);
+//
+//			// Handle the network only having two layers (i.e. no hidden layers)
+//			vector<double> previousActivations = ((int)layers.size()) - 2 >= 0 ? layers[layers.size() - 2].Activations() : fv.data;
+//			layers[layers.size() - 1].BackwardPassOutputLayer(previousActivations,
+//															  fv.label,
+//															  costFunction);
+//
+//			for(int layer = (int)layers.size() - 2; layer >= 0; --layer)
+//			{
+//				previousActivations = layer > 0 ? layers[layer - 1].Activations() : fv.data;
+//				layers[layer].BackwardPassHiddenLayer(previousActivations, layers[layer + 1]);
+//			}
+//		}
+//
+//		cout << "Batch-averaged cost: " << cost / 60000 << endl;
 	}
 }
