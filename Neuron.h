@@ -18,8 +18,7 @@ private:
 	int numberOfInputs;
 	ActivationFunction& activationFunction;
 
-	mutex *weightGradientMutex;
-	mutex *biasGradientMutex;
+	mutex *gradientMutex;
 
 	vector<double> weights;
 	vector<double> weightGradients;
