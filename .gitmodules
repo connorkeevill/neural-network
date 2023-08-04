@@ -1,3 +1,6 @@
 [submodule "ThreadPool"]
 	path = ThreadPool
 	url = git@github.com:connorkeevill/ThreadPool.git
+[submodule "stopwatch"]
+	path = stopwatch
+	url = git@github.com:connorkeevill/stopwatch.git

@@ -3,19 +3,27 @@
 #include "MultilayerPerceptron.h"
 #include "ActivationFunction.h"
 #include "CostFunction.h"
+#include "stopwatch/Stopwatch.hpp"
 
 int main()
 {
+	Stopwatch stopwatch{};
+
 	// Create a network with 3 input neurons, one hidden layer with 3 neurons, and an output layer of 2 neurons.
 	Sigmoid activationFunction{};
 	MeanSquaredError costFunction{};
 	auto network = std::make_unique<MultilayerPerceptron>(std::vector<int>{784, 100, 10}, activationFunction, costFunction);
 
+	stopwatch.addMeasurement("Before reading data.");
 	Dataset *trainingData = new MnistDataset("train-images-idx3-ubyte", "train-labels-idx1-ubyte");
+	stopwatch.addMeasurement("Data read");
 
-	network->Train(trainingData, 0.1, 50, 10);
+
+	network->Train(trainingData, 1, 100, 10);
+	stopwatch.addMeasurement("Network trained");
 
 	Dataset *testData = new MnistDataset("t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte");
+
 
 	int correctClassifications = 0;
 
@@ -37,6 +45,10 @@ int main()
 		cout << endl;
 	}
 
+	stopwatch.addMeasurement("Accuracy test completed");
+
 	cout << "Correct classifications: " << correctClassifications << endl;
 	cout << "Accuracy: " << (correctClassifications / 10000.0) << endl;
+
+	cout << stopwatch.getTimingTrace();
 }
