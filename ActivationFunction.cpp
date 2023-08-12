@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <utility>
 #include "ActivationFunction.h"
 
 
@@ -8,24 +9,24 @@
  *
  * This function calculates the sigmoid value for the given input.
  *
- * @param input The input value.
+ * @param neuronOutputs The input value.
  * @return The sigmoid value.
  */
-double Sigmoid::Function(double input)
+double Sigmoid::Function(vector<double> neuronOutputs, int neuronIndex)
 {
-	return 1.0 / (1.0 + std::exp(-input));
+	return 1.0 / (1.0 + std::exp(-neuronOutputs[neuronIndex]));
 }
 
 
 /**
  * Calculates the derivative of the sigmoid function at a given input.
  *
- * @param input The input value to the sigmoid function.
+ * @param neuronOutputs The input value to the sigmoid function.
  * @return The derivative value of the sigmoid function at the given input.
  */
-double Sigmoid::Derivative(double input)
+double Sigmoid::Derivative(vector<double> neuronOutputs, int neuronIndex)
 {
-	double sigmoid = Function(input);
+	double sigmoid = Function(neuronOutputs, neuronIndex);
 	return sigmoid * (1 - sigmoid);
 }
 

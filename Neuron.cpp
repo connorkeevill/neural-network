@@ -9,10 +9,9 @@
  * @param numberOfInputs the number of inputs to this neuron.
  * @param activationFunction the neuron's activation function.
  */
-Neuron::Neuron(int numberOfInputs, ActivationFunction& activationFunction) : activationFunction(activationFunction)
+Neuron::Neuron(int numberOfInputs)
 {
 	this->numberOfInputs = numberOfInputs;
-	this->activationFunction = activationFunction;
 
 	this->gradientMutex = new mutex{};
 
@@ -40,7 +39,7 @@ double Neuron::ForwardPass(vector<double> input) {
 				to_string(numberOfInputs) + ").");
 	}
 
-	return this->activationFunction.Function(inner_product(input.begin(), input.end(), this->weights.begin(), double {}) + bias);;
+	return inner_product(input.begin(), input.end(), this->weights.begin(), double {}) + bias;
 }
 
 /**
@@ -54,9 +53,9 @@ double Neuron::GetWeight(int index)
 	return weights[index];
 }
 
-double Neuron::UpdateGradients(vector<double> &previousActivations, double activation, double nextLayerPartialDerivative)
+double Neuron::UpdateGradients(vector<double> &previousActivations, double activationDerivative, double nextLayerPartialDerivative)
 {
-	double currentPartialDerivative = activationFunction.Derivative(activation) * nextLayerPartialDerivative;
+	double currentPartialDerivative = activationDerivative * nextLayerPartialDerivative;
 
 	gradientMutex->lock();
 	for(int weightIndex = 0; weightIndex < weights.size(); ++weightIndex)

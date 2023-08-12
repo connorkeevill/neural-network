@@ -15,7 +15,7 @@ Layer::Layer(int numberOfInputs, int numberOfOutputs, ActivationFunction& activa
 
 	for(int neuron = 0; neuron < numberOfOutputs; ++neuron)
 	{
-		this->neurons.emplace_back(numberOfInputs, activationFunction);
+		this->neurons.emplace_back(numberOfInputs);
 	}
 }
 
@@ -27,13 +27,20 @@ Layer::Layer(int numberOfInputs, int numberOfOutputs, ActivationFunction& activa
  */
 vector<double> Layer::ForwardPass(const vector<double>& inputs)
 {
+	vector<double> outputs;
 	vector<double> activations;
 
 	// Allocate the amount of memory we'll need for the output activations for in-loop performance.
+	outputs.reserve(this->neurons.size());
 	activations.reserve(this->neurons.size());
 
 	for (Neuron& neuron: this->neurons) {
-		activations.push_back(neuron.ForwardPass(inputs));
+		outputs.push_back(neuron.ForwardPass(inputs));
+	}
+
+	for(int output = 0; output < outputs.size(); ++output)
+	{
+		activations.emplace_back(activationFunction.Function(outputs, output));
 	}
 
 	return activations;
@@ -46,8 +53,11 @@ vector<double> Layer::BackwardPassOutputLayer(vector<double> &previousLayerActiv
 	for(int neuron = 0; neuron < neurons.size(); ++neuron)
 	{
 		double costFunctionDerivative = cost.Derivative(currentLayerActivations[neuron], expectedOutputs[neuron]);
-		partialDerivatives.push_back(neurons[neuron].UpdateGradients(previousLayerActivations, currentLayerActivations[neuron],
-										costFunctionDerivative));
+		partialDerivatives.push_back(
+				neurons[neuron].UpdateGradients(
+						previousLayerActivations,
+						activationFunction.Derivative(currentLayerActivations, neuron),
+						costFunctionDerivative));
 	}
 
 	return partialDerivatives;

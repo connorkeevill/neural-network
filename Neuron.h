@@ -8,15 +8,14 @@ using namespace std;
 
 class Neuron {
 public:
-	Neuron(int numberOfInputs, ActivationFunction& activationFunction);
+	Neuron(int numberOfInputs);
 
 	double ForwardPass(vector<double> input);
 	double GetWeight(int index);
-	double UpdateGradients(vector<double> &previousActivations, double activation, double nextLayerPartialDerivative);
+	double UpdateGradients(vector<double> &previousActivations, double activationDerivative, double nextLayerPartialDerivative);
 	void ApplyGradientsToWeights(double scalingFactor);
 private:
 	int numberOfInputs;
-	ActivationFunction& activationFunction;
 
 	mutex *gradientMutex;
 
