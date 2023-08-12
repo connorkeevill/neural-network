@@ -30,4 +30,23 @@ double Sigmoid::Derivative(vector<double> neuronOutputs, int neuronIndex)
 	return sigmoid * (1 - sigmoid);
 }
 
+double Softmax::Function(vector<double> neuronOutputs, int neuronIndex)
+{
+  double max_elem = *max_element(neuronOutputs.begin(), neuronOutputs.end());
 
+  double sum = 0.0;
+  for(const auto& output : neuronOutputs)
+  {
+    sum += exp(output - max_elem);
+  }
+
+  return exp(neuronOutputs[neuronIndex] - max_elem) / sum;
+}
+
+
+double Softmax::Derivative(vector<double> neuronOutputs, int neuronIndex)
+{
+  double softmax = Function(neuronOutputs, neuronIndex);
+
+  return softmax * (1 - softmax);
+}
