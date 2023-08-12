@@ -4,9 +4,11 @@
  * Construct the network.
  *
  * @param shape a vector of integers specifying both the number of layers, and the number of neurons in each.
- * @param activationFunction the activation function to use. TODO: For now this is just going to be sigmoid.
+ * @param hiddenLayerActivationFunction the activation function to use.
  */
-MultilayerPerceptron::MultilayerPerceptron(const vector<int>& shape, ActivationFunction& activationFunction,
+MultilayerPerceptron::MultilayerPerceptron(const vector<int>& shape,
+										   ActivationFunction& hiddenLayerActivationFunction,
+										   ActivationFunction& outputLayerActivationFunction,
 										   CostFunction& costFunction) : costFunction(costFunction)
 {
 	this->shape = shape;
@@ -14,7 +16,13 @@ MultilayerPerceptron::MultilayerPerceptron(const vector<int>& shape, ActivationF
 	for(int layer = 1; layer < shape.size(); ++layer)
 	{
 		// emplace_back (as opposed to push_back) is slightly more memory efficient as it's in-place.
-		this->layers.emplace_back(shape[layer - 1], shape[layer], activationFunction);
+
+		if(layer == shape.size() - 1) {
+			this->layers.emplace_back(shape[layer - 1], shape[layer], outputLayerActivationFunction);
+		}
+		else {
+			this->layers.emplace_back(shape[layer - 1], shape[layer], hiddenLayerActivationFunction);
+		}
 	}
 }
 

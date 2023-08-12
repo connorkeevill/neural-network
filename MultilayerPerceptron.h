@@ -14,7 +14,10 @@ using namespace std;
 class MultilayerPerceptron
 {
 public:
-	MultilayerPerceptron(const vector<int>& shape, ActivationFunction& activationFunction, CostFunction& costFunction);
+	MultilayerPerceptron(const vector<int>& shape,
+						 ActivationFunction& hiddenLayerActivationFunction,
+						 ActivationFunction& outputLayerActivationFunction,
+						 CostFunction& costFunction);
 
 	void Train(Dataset* dataset, double learningRate, int batchSize, int epochs);
 
