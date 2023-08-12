@@ -75,21 +75,21 @@ int MultilayerPerceptron::NumberOfOutputs() {
 void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batchSize, int epochs)
 {
 	// Create threadpool to train in parallel.
-	ThreadPool threads {(size_t)(thread::hardware_concurrency() * 2)};
+	ThreadPool threads {(size_t)(thread::hardware_concurrency())};
 //	ThreadPool threads {1};
-	vector<future<void>> trainingTasks {};
+	vector<future<void>> tasks {};
 
 	for(int epoch = 0; epoch < epochs; ++epoch)
 	{
 		int samplesProcessed = 0;
-		cout << "Epoch: " << epoch << endl;
+//		cout << "Epoch: " << epoch << endl;
 
 		int batchCount = 0;
 
 		dataset->ResetCounter();
 		while(!dataset->EndOfData())
 		{
-			cout << "Epoch: " << epoch << " Batch: " << batchCount++ << endl;
+//			cout << "Epoch: " << epoch << " Batch: " << batchCount++ << endl;
 
 			for(int trainingSample = 0; trainingSample < batchSize && samplesProcessed < dataset->Size(); ++trainingSample)
 			{
@@ -98,7 +98,7 @@ void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batc
 				// Pull the feature vector from the dataset now (instead of in thread) so that dataset counter is incremented.
 				FeatureVector fv = dataset->GetNextFeatureVector();
 
-				trainingTasks.push_back(threads.enqueue([this, fv] {
+				tasks.push_back(threads.enqueue([this, fv] {
 					vector<vector<double>> activations = TrainingForwardPass(fv.data);
 
 					// Handle the network only having two layers (i.e. no hidden layers)
@@ -122,11 +122,18 @@ void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batc
 			}
 
 			// Wait on all training tasks to finish
-			for(future<void> &trainingTask : trainingTasks) { trainingTask.get();}
-			trainingTasks.clear();
+			for(future<void> &task : tasks) { task.get();}
+			tasks.clear();
 
 			// Apply the accumulated gradients.
-			for(Layer &layer : layers) { layer.ApplyGradientsToWeights(learningRate / batchSize); }
+			for(Layer &layer : layers) { tasks.push_back(threads.enqueue([&layer, learningRate, batchSize] {
+					layer.ApplyGradientsToWeights(learningRate / batchSize);
+				}));
+			}
+
+			// Wait on all updates to finish
+			for(future<void> &task : tasks) { task.get();}
+			tasks.clear();
 		}
 	}
 }
