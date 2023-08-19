@@ -19,11 +19,11 @@ Neuron::Neuron(int numberOfInputs)
 	this->weightGradients.reserve(numberOfInputs);
 	for(int weight = 0; weight < numberOfInputs; ++weight)
 	{
-		weights.push_back(rand(-1, 1));
+		weights.push_back(rand(0, 1));
 		weightGradients.push_back(0);
 	}
 
-	bias = rand(-1, 1);
+	bias = rand(0, 1);
 }
 
 /**
