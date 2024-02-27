@@ -93,6 +93,7 @@ void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batc
 //		cout << "Epoch: " << epoch << endl;
 
 		int batchCount = 0;
+		double batchCost = 0;
 
 		dataset->ResetCounter();
 		while(!dataset->EndOfData())
@@ -105,6 +106,9 @@ void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batc
 
 				// Pull the feature vector from the dataset now (instead of in thread) so that dataset counter is incremented.
 				FeatureVector fv = dataset->GetNextFeatureVector();
+
+				++batchCount;
+				batchCost += costFunction.Cost(ForwardPass(fv.data), fv.label);
 
 				tasks.push_back(threads.enqueue([this, fv] {
 					vector<vector<double>> activations = TrainingForwardPass(fv.data);
@@ -128,6 +132,8 @@ void MultilayerPerceptron::Train(Dataset* dataset, double learningRate, int batc
 					}
 				}));
 			}
+
+			cout << "Batch cost: " << batchCost / batchCount << endl;
 
 			// Wait on all training tasks to finish
 			for(future<void> &task : tasks) { task.get();}
