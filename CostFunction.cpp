@@ -1,4 +1,5 @@
 #include "CostFunction.h"
+#include <iostream>
 
 
 /**
@@ -47,4 +48,44 @@ double MeanSquaredError::Cost(vector<double> predicted, vector<double> expected)
 double MeanSquaredError::Derivative(double predicted, double expected)
 {
 	return 2 * (predicted - expected);
+}
+
+
+/**
+ * @class CrossEntropy
+ * @brief Calculates the cross entropy loss between predicted and expected values.
+ *
+ * @param predicted the predicted values by the network.
+ * @param expected the actual values as given by the label.
+ */
+double CrossEntropy::Cost(vector<double> predicted, vector<double> expected)
+{
+	// cost is sum (for all x,y pairs) of: 0.5 * (x-y)^2
+	double cost = 0;
+
+	for (int i = 0; i < predicted.size(); i++)
+	{
+		double v = (expected[i] == 1) ? -log(predicted[i]) : -log(1 - predicted[i]);
+		cost += isnan(v) ? 0 : v;
+	}
+	return cost;
+}
+
+/**
+ * Returns the derivative of the cost function at the given inputs.
+ *
+ * @param predicted the predicted value to calculate the derivative at.
+ * @param expected the expected value to calculate the derivative at.
+ * @return the derivative.
+ */
+double CrossEntropy::Derivative(double predicted, double expected)
+{
+
+	if (predicted == 0 || predicted == 1)
+	{
+		return 0;
+	}
+
+	double output = (-predicted + expected) / (predicted * (predicted - 1));
+	return output;
 }

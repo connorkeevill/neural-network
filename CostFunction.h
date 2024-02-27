@@ -20,3 +20,10 @@ public:
 	double Cost(vector<double> predicted, vector<double> expected) override;
 	double Derivative(double predicted, double expected) override;
 };
+
+class CrossEntropy : public CostFunction
+{
+public:
+    double Cost(vector<double> predicted, vector<double> expected) override;
+    double Derivative(double predicted, double expected) override;
+};
