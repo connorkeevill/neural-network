@@ -24,7 +24,7 @@ int main()
 	stopwatch.addMeasurement("Data read");
 
 
-	network->Train(trainingData, 1, 100, 10);
+	network->Train(trainingData, 0.5, 100, 10);
 	stopwatch.addMeasurement("Network trained");
 
 	Dataset *testData = new MnistDataset("t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte");
