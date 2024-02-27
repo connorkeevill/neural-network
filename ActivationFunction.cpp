@@ -3,6 +3,19 @@
 #include <utility>
 #include "ActivationFunction.h"
 
+vector<double> minMaxScale(vector<double> values)
+{
+	double min = *min_element(values.begin(), values.end());
+	double max = *max_element(values.begin(), values.end());
+
+	for(double &value : values)
+	{
+		value = (value - min) / (max - min);
+	}
+
+	return values;
+}
+
 
 /**
  * @brief Sigmoid function.
@@ -27,26 +40,43 @@ double Sigmoid::Function(vector<double> neuronOutputs, int neuronIndex)
 double Sigmoid::Derivative(vector<double> neuronOutputs, int neuronIndex)
 {
 	double sigmoid = Function(neuronOutputs, neuronIndex);
-	return sigmoid * (1 - sigmoid);
+
+	double output = sigmoid * (1 - sigmoid);
+
+	return output;
+}
+
+double ReLU::Function(vector<double> neuronOutputs, int neuronIndex)
+{
+	return std::max(0.0, neuronOutputs[neuronIndex]);
+}
+
+double ReLU::Derivative(vector<double> neuronOutputs, int neuronIndex)
+{
+	return neuronOutputs[neuronIndex] > 0 ? 1 : 0;
 }
 
 double Softmax::Function(vector<double> neuronOutputs, int neuronIndex)
 {
-  double max_elem = *max_element(neuronOutputs.begin(), neuronOutputs.end());
+	double expSum = 0;
 
-  double sum = 0.0;
-  for(const auto& output : neuronOutputs)
-  {
-    sum += exp(output - max_elem);
-  }
+	for (int i = 0; i < neuronOutputs.size(); i++)
+	{
+		expSum += exp(neuronOutputs[i]);
+	}
 
-  return exp(neuronOutputs[neuronIndex] - max_elem) / sum;
+	return exp(neuronOutputs[neuronIndex]) / expSum;
 }
 
 
 double Softmax::Derivative(vector<double> neuronOutputs, int neuronIndex)
 {
-  double softmax = Function(neuronOutputs, neuronIndex);
+	double sum = 0;
 
-  return softmax * (1 - softmax);
+	for (int i = 0; i < neuronOutputs.size(); i++) {
+		sum += exp(neuronOutputs[i]);
+	}
+
+	double ex = exp(neuronOutputs[neuronIndex]);
+	return 10 * ex * (sum - ex) / (sum * sum);
 }

@@ -19,6 +19,13 @@ public:
 	double Derivative(vector<double> neuronOutputs, int neuronIndex) override;
 };
 
+class ReLU : public ActivationFunction
+{
+public:
+	double Function(vector<double> neuronOutputs, int neuronIndex) override;
+	double Derivative(vector<double> neuronOutputs, int neuronIndex) override;
+};
+
 class Softmax : public ActivationFunction
 {
 public:
